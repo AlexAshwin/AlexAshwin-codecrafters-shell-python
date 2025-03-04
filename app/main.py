@@ -7,13 +7,11 @@ def main():
         # Wait for user input
         command = input()
         command, *args = command.split(" ")
-        if command == "exit 0":
+        if command == "exit":
             break
         elif command[0:4] == "echo":
             print(" ".join(args))
-            main()
         else:
             print(f"{command}: command not found")
-            main()
 if __name__ == "__main__":
     main()
