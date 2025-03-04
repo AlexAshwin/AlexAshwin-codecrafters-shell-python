@@ -6,7 +6,7 @@ import os
 def handler_echo(args):
     print(args)
 
-def handler_exit():
+def handler_exit(args=None):
     exit(0)
 
 def handler_type(args):
@@ -19,7 +19,7 @@ def handler_type(args):
         else:
             print(f"{args}: not found")
 
-def check_executable(args=None):
+def check_executable(args):
 
     script_path = shutil.which(args.split()[0])
     if script_path:
@@ -27,7 +27,7 @@ def check_executable(args=None):
     else:
         print(f"{args}: not found")
 
-        
+
 builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type}
 
 def main():
