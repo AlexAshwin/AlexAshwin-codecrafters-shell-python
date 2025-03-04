@@ -2,13 +2,15 @@ import shutil
 import sys
 import os
 
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type}
+
 def handler_echo(args):
     print(args)
 
 def handler_exit():
     exit(0)
 
-def handler_type(args,builtin):
+def handler_type(args):
     if args in builtin:
         print(f"{args} is a shell builtin")
     else:
@@ -26,8 +28,6 @@ def check_executable(args=None):
     else:
         print(f"{args}: not found")
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type}
-
 def main():
     while True:
         # Uncomment this block to pass the first stage
@@ -35,7 +35,7 @@ def main():
         # Wait for user input
         command = input()
         if command.split()[0] in builtin:
-            builtin[command.split()[0]](command.split(maxsplit=1)[1],builtin)
+            builtin[command.split()[0]](command.split(maxsplit=1)[1])
         else:
             check_executable(command)
 
