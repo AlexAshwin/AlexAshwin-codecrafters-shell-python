@@ -40,7 +40,10 @@ def handler_pwd(args=None):
 
 def handler_change_directory(args):
     try:
-        os.chdir(args)
+        if args != "~":
+            os.chdir(args)
+        else:
+            os.chdir("/")
     except FileNotFoundError:
         print(f"cd: {args}: No such file or directory")
 
