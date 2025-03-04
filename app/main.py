@@ -6,8 +6,8 @@ def main():
 
         # Wait for user input
         command = input()
-        builtin = ['type','echo','exit 0']
-        if command == "exit 0":
+        builtin = ['type','echo','exit']
+        if command == "exit" or command == "exit 0":
             break
         elif command.startswith("echo"):
             print(command[5:])
