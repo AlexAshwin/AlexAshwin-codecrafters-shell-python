@@ -7,6 +7,9 @@ def main():
     command = input()
     if command == "exit 0":
         sys.exit(0)
+    elif command[0:4] == "echo":
+        print(command[5:])
+        main()
     else:
         print(f"{command}: command not found")
         main()
