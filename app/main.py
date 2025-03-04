@@ -2,7 +2,7 @@ import sys
 import os
 
 def handler_echo(args=None):
-    if args.startswith("") and args.endswith(""):
+    if args.startswith('') and args.endswith(''):
         print(args)
     else:
         print(args if args else "")
