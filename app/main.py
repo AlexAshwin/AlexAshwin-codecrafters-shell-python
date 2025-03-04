@@ -1,3 +1,4 @@
+import shutil
 import sys
 def main():
     while True:
@@ -13,7 +14,12 @@ def main():
             print(command[5:])
         elif command.startswith("type"):
             if command[5:] in builtin:
-                print(f"{command[5:]} is a shell builtin")
+                if  path := shutil.which(command[5:]):
+                    print(f"{command[5:]} is a shell builtin")
+                    print(f"{command[5:]} is {path}")
+                else:
+                    print(f"{command[5:]}: command not found")
+                
             elif command[5:] == "":
                 print("Please provide a command to check") 
             else:
