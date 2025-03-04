@@ -35,7 +35,7 @@ def main():
         # Wait for user input
         command = input()
         if command.split()[0] in builtin:
-            builtin[command.split()[0]](command.split()[1],builtin)
+            builtin[command.split()[0]](command.split(maxsplit=1)[1],builtin)
         else:
             check_executable(command)
 
