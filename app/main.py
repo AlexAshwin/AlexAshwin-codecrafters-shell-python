@@ -2,8 +2,10 @@ import sys
 import os
 
 def handler_echo(args=None):
-    # If no argument is provided, print an empty line
-    print(args if args else "")
+    if args.startswith("") and args.endswith(""):
+        print(args)
+    else:
+        print(args if args else "")
 
 def handler_exit(args=None):
     exit(0)
