@@ -2,8 +2,8 @@ import sys
 import os
 
 def handler_echo(args=None):
-    if args.startswith('') and args.endswith(''):
-        print(args.replace("'",''))
+    if (args.startswith('"') and args.endswith('"')) or (args.startswith("'") and args.endswith("'")):
+        print(args[1:-1])
     else:
         print(args if args else "")
 
