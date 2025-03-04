@@ -6,11 +6,18 @@ def main():
 
         # Wait for user input
         command = input()
-        command, *args = command.split(" ")
+        builtin = ['type','echo','exit']
         if command == "exit":
             break
-        elif command[0:4] == "echo":
-            print(" ".join(args))
+        elif command.startswith("echo"):
+            print(command[5:])
+        elif command.startswith("type"):
+            if command[5:] in builtin:
+                print(f"{command[5:]} is a shell builtin")
+            elif command[5:] == "":
+                print("Please provide a command to check") 
+            else:
+                print(f"{command[5:]}: not found")
         else:
             print(f"{command}: command not found")
 if __name__ == "__main__":
