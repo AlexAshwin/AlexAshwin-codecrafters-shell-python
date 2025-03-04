@@ -37,8 +37,15 @@ def check_executable(args):
 def handler_pwd(args=None):
     print(os.getcwd())
 
+
+def handler_change_directory(args):
+    try:
+        os.chdir(args)
+    except FileNotFoundError:
+        print(f"cd: {args}: No such file or directory")
+
 # Define built-in handlers
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd}
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory}
 
 def main():
     while True:
