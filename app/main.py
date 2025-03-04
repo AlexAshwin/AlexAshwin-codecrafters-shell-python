@@ -13,11 +13,20 @@ def handler_type(args):
     if args in builtin:
         print(f"{args} is a shell builtin")
     else:
-        path = shutil.which(args)
+        # Use os to check if the command is executable
+        path = find_executable(args)
         if path:
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
+
+def find_executable(command):
+    # Check if the command is in the system's PATH
+    for dir in os.environ.get("PATH", "").split(os.pathsep):
+        executable = os.path.join(dir, command)
+        if os.path.isfile(executable) and os.access(executable, os.X_OK):
+            return executable
+    return None
 
 def check_executable(args):
 
@@ -27,8 +36,10 @@ def check_executable(args):
     else:
         print(f"{args}: not found")
 
+def handler_pwd(args=None):
+    print(os.getcwd())
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type}
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type ,"pwd": handler_pwd}
 
 def main():
     while True:
