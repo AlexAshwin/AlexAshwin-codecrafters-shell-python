@@ -3,7 +3,7 @@ import os
 
 def handler_echo(args=None):
     if args.startswith('') and args.endswith(''):
-        print(args.replace(("'","")))
+        print(args.replace("'",''))
     else:
         print(args if args else "")
 
