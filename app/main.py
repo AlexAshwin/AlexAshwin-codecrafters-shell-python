@@ -1,10 +1,9 @@
-import shutil
 import sys
 import os
 
-
-def handler_echo(args):
-    print(args)
+def handler_echo(args=None):
+    # If no argument is provided, print an empty line
+    print(args if args else "")
 
 def handler_exit(args=None):
     exit(0)
@@ -29,8 +28,7 @@ def find_executable(command):
     return None
 
 def check_executable(args):
-
-    script_path = shutil.which(args.split()[0])
+    script_path = find_executable(args.split()[0])
     if script_path:
         os.system(args)
     else:
@@ -39,16 +37,23 @@ def check_executable(args):
 def handler_pwd(args=None):
     print(os.getcwd())
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type ,"pwd": handler_pwd}
+# Define built-in handlers
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd}
 
 def main():
     while True:
-        # Uncomment this block to pass the first stage
         sys.stdout.write("$ ")
-        # Wait for user input
         command = input()
-        if command.split()[0] in builtin:
-            builtin[command.split()[0]](command.split(maxsplit=1)[1])
+        parts = command.split(maxsplit=1)
+        
+        # If no arguments provided for commands like echo or type, pass None to the handler
+        if len(parts) > 1:
+            cmd, args = parts
+        else:
+            cmd, args = parts[0], None
+        
+        if cmd in builtin:
+            builtin[cmd](args)
         else:
             check_executable(command)
 
