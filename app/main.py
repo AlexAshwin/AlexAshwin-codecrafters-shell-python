@@ -15,7 +15,7 @@ def main():
             if  path := shutil.which(command[5:]):
                  print(f"{command[5:]} is {path}")
             else:
-                print(f"{command[5:]}: command not found")
+                print(f"{command[5:]}: not found")
         elif command[5:] == "":
             print("Please provide a command to check")
 if __name__ == "__main__":
