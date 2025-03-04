@@ -2,7 +2,6 @@ import shutil
 import sys
 import os
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type}
 
 def handler_echo(args):
     print(args)
@@ -27,6 +26,9 @@ def check_executable(args=None):
         os.system(args)
     else:
         print(f"{args}: not found")
+
+        
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type}
 
 def main():
     while True:
