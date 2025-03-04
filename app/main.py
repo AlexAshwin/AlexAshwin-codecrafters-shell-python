@@ -12,10 +12,10 @@ def main():
         elif command.startswith("echo"):
             print(command[5:])
         elif command.startswith("type"):
-            if  path := shutil.which(command[5:]):
-                 print(f"{command[5:]} is {path}")
-            elif command[5:] in builtin:
+            if command[5:] in builtin:
                 print(f"{command[5:]} is a shell builtin")
+            elif  path := shutil.which(command[5:]):
+                 print(f"{command[5:]} is {path}")
             else:
                 print(f"{command[5:]}: not found")
         elif command[5:] == "":
