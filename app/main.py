@@ -40,4 +40,4 @@ def main():
             check_executable(command)
 
 if __name__ == "__main__":
-    main(
+    main()
