@@ -5,8 +5,9 @@ import shlex
 def handler_echo(args=None):
     if args:
         # Split like a shell would, preserving quoted spaces
-        parsed_args = shlex.split(args)
-        print(" ".join(parsed_args))
+        parsed_args = shlex.split(args, posix=True)
+        # Use repr() to preserve escape sequences and quotes
+        print(" ".join([repr(arg) for arg in parsed_args]))
     else:
         print("")
 
