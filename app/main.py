@@ -82,6 +82,7 @@ def main():
             builtin[cmd](args)
         else:
             check_executable(command)
+        print("\n")
 
 if __name__ == "__main__":
     main()
