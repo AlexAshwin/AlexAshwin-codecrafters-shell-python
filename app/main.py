@@ -17,7 +17,7 @@ def handler_echo(args=None):
 
     else:
         print(args)
-    sys.stdout.write("$ ")
+
 
 def handler_exit(args=None):
     exit(0)
