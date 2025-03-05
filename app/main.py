@@ -49,7 +49,7 @@ def main():
 
 def handle_cmd(cmd):
     match shlex.split(cmd):
-        case ["exit"]:
+        case ["exit 0"]:
             sys.exit(0)
         case ["echo", *args]:
             print(*args)
