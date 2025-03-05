@@ -74,7 +74,7 @@ def handler_change_directory(args):
 def handler_cat(args):
     try:
         with open(args, 'r') as f:
-            print(f.read())
+            sys.stdout.write(f.read())
     except FileNotFoundError:
         print(f"cat: {args}: No such file or directory")
     sys.stdout.write("$ ")
