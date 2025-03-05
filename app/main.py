@@ -3,101 +3,76 @@ import os
 import subprocess
 
 def handler_echo(args=None):
+    if args is None:
+        return
+
     # Check for output redirection
     if "1>" in args:
-        args = args.split(" 1> ")  # Remove space after '1>'
-        args[0] = args[0].strip("'")  # Clean up the string
-        with open(args[1], 'w') as f:
-            f.write(args[0])
+        args = args.split(" 1> ")
+        output_file = args[1]
+        output = args[0].strip("'")
+        with open(output_file, 'w') as f:
+            f.write(output.strip())
     elif ">" in args:
-        args = args.split(" > ")  # Remove space after '>'
-        args[0] = args[0].strip("'")  # Clean up the string
-        with open(args[1], 'w') as f:
-            f.write(args[0])
+        args = args.split(" > ")
+        output_file = args[1]
+        output = args[0].strip("'")
+        with open(output_file, 'w') as f:
+            f.write(output.strip())
     else:
-        print(args)  # Print to terminal if no redirection
+        print(args)
 
 def handler_exit(args=None):
-    exit(0)
-
-def handler_type(args):
-    if args in builtin:
-        print(f"{args} is a shell builtin")
-    else:
-        path = find_executable(args)
-        if path:
-            print(f"{args} is {path}")
-        else:
-            print(f"{args}: not found")
-    # Only print the prompt if there's no redirection
-    sys.stdout.write("$ ")
-
-def find_executable(command):
-    for dir in os.environ.get("PATH", "").split(os.pathsep):
-        executable = os.path.join(dir, command)
-        if os.path.isfile(executable) and os.access(executable, os.X_OK):
-            return executable
-    return None
-
-def check_executable(args):
-    script_path = find_executable(args.split()[0])
-    if script_path:
-        # Check if the command contains the '>' operator
-        if '>' in args:
-            command, file_name = args.split('>', 1)
-            file_name = file_name.strip()
-            with open(file_name, 'w') as f:
-                subprocess.run(command, shell=True, stdout=f)
-            return
-        subprocess.run(args, shell=True)
-    else:
-        print(f"{args}: not found")
-    # Only print the prompt if there's no redirection
-    sys.stdout.write("$ ")
+    sys.exit(0)
 
 def handler_pwd(args=None):
     print(os.getcwd())
-    sys.stdout.write("$ ")
 
-def handler_change_directory(args):
-    if args == '~':
-        os.chdir(os.path.expanduser('~'))
-    elif args == '/':
-        os.chdir('/')
-    else:
-        try:
-            os.chdir(args)
-        except FileNotFoundError:
-            print(f"cd: {args}: No such file or directory")
-    sys.stdout.write("$ ")
+def handler_cd(args=None):
+    if args is None:
+        return
+    try:
+        os.chdir(args)
+    except FileNotFoundError:
+        print("Directory not found")
 
-def handler_cat(args):
+def handler_cat(args=None):
+    if args is None:
+        return
     try:
         with open(args, 'r') as f:
-            sys.stdout.write(f.read())
+            print(f.read())
     except FileNotFoundError:
-        print(f"cat: {args}: No such file or directory")
+        print("File not found")
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory, "cat": handler_cat}
+def handler_type(args=None):
+    if args is None:
+        return
+    try:
+        with open(args, 'r') as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("File not found")
 
 def main():
     while True:
-        sys.stdout.write("$ ")
-        command = input().strip()
+        user_input = input("$ ")
+        args = user_input.split()
 
-        if not command:
-            continue
-
-        parts = command.split(maxsplit=1)
-        if len(parts) > 1:
-            cmd, args = parts
+        if args[0] == "echo":
+            handler_echo(" ".join(args[1:]))
+        elif args[0] == "exit":
+            handler_exit()
+        elif args[0] == "pwd":
+            handler_pwd()
+        elif args[0] == "cd":
+            handler_cd(args[1])
+        elif args[0] == "cat":
+            handler_cat(args[1])
+        elif args[0] == "type":
+            handler_type(args[1])
         else:
-            cmd, args = parts[0], None
-
-        if cmd in builtin:
-            builtin[cmd](args)
-        else:
-            check_executable(command)
+            subprocess.run(args)
 
 if __name__ == "__main__":
     main()
