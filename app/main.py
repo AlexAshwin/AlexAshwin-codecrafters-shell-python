@@ -71,6 +71,7 @@ def handler_cat(args):
     try:
         with open(args, 'r') as f:
             print(f.read())
+        pass
     except FileNotFoundError:
         print(f"cat: {args}: No such file or directory")
 
