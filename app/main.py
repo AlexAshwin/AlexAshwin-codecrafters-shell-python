@@ -10,12 +10,18 @@ def handler_echo(args=None):
     if "1>" in args:
         args = args.split(" 1> ")
         output_file = args[1]
+        output_dir = os.path.dirname(output_file)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
         output = args[0].strip("'")
         with open(output_file, 'w') as f:
             f.write(output.strip())
     elif ">" in args:
         args = args.split(" > ")
         output_file = args[1]
+        output_dir = os.path.dirname(output_file)
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
         output = args[0].strip("'")
         with open(output_file, 'w') as f:
             f.write(output.strip())
