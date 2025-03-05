@@ -8,14 +8,12 @@ def handler_echo(args=None):
         args[0] = args[0].strip("'")
         with open(args[1], 'w') as f:
             f.write(args[0])
-        printnl("$ ")  # Add this line
 
     elif (">" in args):
         args = args.split(" > ")
         args[0] = args[0].strip("'")
         with open(args[1], 'w') as f:
             f.write(args[0])
-        printnl("$ ")  # Add this line
 
     else:
         print(args)
