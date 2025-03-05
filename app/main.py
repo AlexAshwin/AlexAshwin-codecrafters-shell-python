@@ -81,8 +81,8 @@ def handler_cat(args):
 builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory, "cat": handler_cat}
 
 def main():
+    sys.stdout.write("$ ")
     while True:
-        sys.stdout.write("\n$ ")
         command = input().strip()
 
         if not command:
@@ -98,6 +98,7 @@ def main():
             builtin[cmd](args)
         else:
             check_executable(command)
+        sys.stdout.write("\n$ ")
 
 if __name__ == "__main__":
     main()
