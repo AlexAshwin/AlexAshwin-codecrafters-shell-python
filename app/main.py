@@ -25,18 +25,19 @@ def find_executable(command):
             return executable
     return None
 
-def check_executable(command):
-    try:
-        parts = shlex.split(command)
-    except ValueError as e:
-        print(f"Error parsing command: {e}")
-        return
-
-    script_path = find_executable(parts[0])
+def check_executable(args):
+    script_path = find_executable(args.split()[0])
     if script_path:
-        os.system(command)
+        # Check if the command contains the '>' operator
+        if '>' in args:
+            command, file_name = args.split('>', 1)
+            file_name = file_name.strip()
+            with open(file_name, 'w') as f:
+                subprocess.run(command, shell=True, stdout=f)
+        else:
+            subprocess.run(args, shell=True)
     else:
-        print(f"{parts[0]}: not found")
+        print(f"{args}: not found")
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -52,31 +53,17 @@ def handler_change_directory(args):
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
 
-builtin = {
-    "echo": handler_echo,
-    "exit": handler_exit,
-    "type": handler_type,
-    "pwd": handler_pwd,
-    "cd": handler_change_directory
-}
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory}
 
 def main():
     while True:
-        print("$ ", end="", flush=True)
+        sys.stdout.write("$ ")
         command = input()
-
-        if not command.strip():
-            continue
-
-        try:
-            parts = shlex.split(command)
-        except ValueError as e:
-            print(f"Error parsing command: {e}")
-            continue
-
-        cmd = parts[0]
-        args = " ".join(parts[1:]) if len(parts) > 1 else None
-
+        parts = command.split(maxsplit=1)
+        if len(parts) > 1:
+            cmd, args = parts
+        else:
+            cmd, args = parts[0], None
         if cmd in builtin:
             builtin[cmd](args)
         else:
