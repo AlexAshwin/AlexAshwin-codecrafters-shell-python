@@ -6,8 +6,8 @@ def handler_echo(args=None):
     if args:
         # Split like a shell would, preserving quoted spaces and handling escapes
         parsed_args = shlex.split(args, posix=True)
-        # Now we manually escape backslashes and quotes
-        print(" ".join([arg.replace("\\", "\\\\").replace("'", "\\'") for arg in parsed_args]))
+        # Instead of using repr(), we simply print the string as is
+        print("".join(parsed_args))
     else:
         print("")
 
