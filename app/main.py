@@ -6,7 +6,7 @@ def handler_echo(args=None, redirect_file=None):
     if args:
         # Split like a shell would, preserving quoted spaces and handling escapes
         parsed_args = shlex.split(args, posix=True)
-        # Join and print the args, redirect to file if needed
+        # Join and prepare the output string
         output = " ".join(parsed_args)
         if redirect_file:
             with open(redirect_file, 'w') as f:
