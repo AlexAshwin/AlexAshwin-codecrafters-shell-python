@@ -16,7 +16,7 @@ def handler_echo(args=None):
             f.write(args[0])
 
     else:
-        print(args)  # Print the output to standard output
+        print(args)
 
 
 def handler_exit(args=None):
@@ -31,6 +31,7 @@ def handler_type(args):
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
+    sys.stdout.write("$ ")
 
 def find_executable(command):
     for dir in os.environ.get("PATH", "").split(os.pathsep):
@@ -52,9 +53,11 @@ def check_executable(args):
         subprocess.run(args, shell=True)
     else:
         print(f"{args}: not found")
+    sys.stdout.write("$ ")
 
 def handler_pwd(args=None):
     print(os.getcwd())
+    sys.stdout.write("$ ")
 
 def handler_change_directory(args):
     if args == '~':
@@ -66,6 +69,7 @@ def handler_change_directory(args):
             os.chdir(args)
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
+    sys.stdout.write("$ ")
 
 def handler_cat(args):
     try:
@@ -78,7 +82,7 @@ builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pw
 
 def main():
     while True:
-        sys.stdout.write("$ ")  # Always print the prompt before receiving input
+        sys.stdout.write("$ ")
         command = input().strip()
 
         if not command:
@@ -94,10 +98,6 @@ def main():
             builtin[cmd](args)
         else:
             check_executable(command)
-        
-        # Print the prompt after a command completes execution
-        if cmd != "echo":  # Only print the prompt if it's not an echo command
-            sys.stdout.write("$ ")
 
 if __name__ == "__main__":
     main()
