@@ -34,8 +34,9 @@ def check_executable(args):
             file_name = file_name.strip()
             with open(file_name, 'w') as f:
                 subprocess.run(command, shell=True, stdout=f)
-        else:
-            subprocess.run(args, shell=True)
+            # Don't print the command when it's being redirected to a file
+            return
+        subprocess.run(args, shell=True)
     else:
         print(f"{args}: not found")
 
