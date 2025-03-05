@@ -67,18 +67,11 @@ def handler_change_directory(args):
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
 
-def handler_cat(args):
-    try:
-        with open(args, 'r') as f:
-            print(f.read())
-    except FileNotFoundError:
-        print(f"cat: {args}: No such file or directory")
-
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory,"cat": handler_cat}
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory}
 
 def main():
     while True:
-        sys.stdout.write("$ ")
+        print("$ ")
         command = input()
         parts = command.split(maxsplit=1)
         if len(parts) > 1:
