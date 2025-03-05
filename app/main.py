@@ -56,7 +56,7 @@ builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pw
 
 def main():
     while True:
-        sys.stdout.write("$ ")
+        print("$ ", end="", flush=True)
         command = input()
         parts = command.split(maxsplit=1)
         
