@@ -5,39 +5,51 @@ from contextlib import redirect_stdout, redirect_stderr
 from subprocess import run, PIPE
 import readline
 
-
 all_builtin_cmd = ["exit", "echo", "type", "pwd", "cd"]
+
+def completer(text, state):
+    completions = [cmd for cmd in all_builtin_cmd if cmd.startswith(text)]
+    if state < len(completions):
+        return completions[state]
+    return None
+
+readline.set_completer(completer)
+readline.parse_and_bind("tab: complete")
+
 def main():
     sys.stdout.write("$ ")
-    # Wait for user input
     cmd = input()
+    
+    # Handle built-in commands directly
     if cmd in all_builtin_cmd:
-        sys.stdout.write(all_builtin_cmd[cmd])
+        handle_cmd(cmd)
     else:
-        print("Unknown command")
-    match shlex.split(cmd):
-        case [*run_cmd, ">>", file] | [*run_cmd, "1>>", file]:
-            with open(file, "a") as out_file:
-                with redirect_stdout(out_file):
-                    handle_cmd(" ".join(run_cmd))
-        case [*run_cmd, ">", file] | [*run_cmd, "1>", file]:
-            with open(file, "w") as out_file:
-                with redirect_stdout(out_file):
-                    handle_cmd(" ".join(run_cmd))
-        case [*run_cmd, "2>>", file]:
-            with open(file, "a") as err_file:
-                with redirect_stderr(err_file):
-                    handle_cmd(" ".join(run_cmd))
-        case [*run_cmd, "2>", file]:
-            with open(file, "w") as err_file:
-                with redirect_stderr(err_file):
-                    handle_cmd(" ".join(run_cmd))
-        case _:
-            handle_cmd(cmd)
+        # Handle commands with redirection
+        match shlex.split(cmd):
+            case [*run_cmd, ">>", file] | [*run_cmd, "1>>", file]:
+                with open(file, "a") as out_file:
+                    with redirect_stdout(out_file):
+                        handle_cmd(" ".join(run_cmd))
+            case [*run_cmd, ">", file] | [*run_cmd, "1>", file]:
+                with open(file, "w") as out_file:
+                    with redirect_stdout(out_file):
+                        handle_cmd(" ".join(run_cmd))
+            case [*run_cmd, "2>>", file]:
+                with open(file, "a") as err_file:
+                    with redirect_stderr(err_file):
+                        handle_cmd(" ".join(run_cmd))
+            case [*run_cmd, "2>", file]:
+                with open(file, "w") as err_file:
+                    with redirect_stderr(err_file):
+                        handle_cmd(" ".join(run_cmd))
+            case _:
+                handle_cmd(cmd)
+
     main()
+
 def handle_cmd(cmd):
     match shlex.split(cmd):
-        case ["exit", "0"]:
+        case ["exit"]:
             sys.exit(0)
         case ["echo", *args]:
             print(*args)
@@ -52,13 +64,9 @@ def handle_cmd(cmd):
             print(process.stdout, end="")
             if process.stderr:
                 print(process.stderr, file=sys.stderr, end="")
-        case [found_cmd] if type_cmd(found_cmd)[0]:
-            process = run(shlex.split(cmd), stdout=PIPE, stderr=PIPE, text=True)
-            print(process.stdout, end="")
-            if process.stderr:
-                print(process.stderr, file=sys.stderr, end="")
         case _:
             print(f"{cmd}: command not found", file=sys.stderr)
+
 def type_cmd(cmd):
     if cmd in all_builtin_cmd:
         return False, f"{cmd} is a shell builtin"
@@ -68,15 +76,12 @@ def type_cmd(cmd):
         if path.isfile(file_path):
             return True, f"{cmd} is {file_path}"
     return False, f"{cmd}: not found"
+
 def cd_cmd(arg):
     try:
         chdir(path.expanduser(arg))
     except OSError:
         print(f"cd: {arg}: No such file or directory", file=sys.stderr)
+
 if __name__ == "__main__":
     main()
-
-def completer(text, state):
-    input_text = readline.get_line_buffer()
-    completions = [cmd for cmd in all_builtin_cmd if cmd.startswith(input_text)]
-    return completions[state]
