@@ -10,7 +10,7 @@ all_builtin_cmd = ["exit", "echo", "type", "pwd", "cd"]
 def completer(text, state):
     completions = [cmd for cmd in all_builtin_cmd if cmd.startswith(text)]
     if state < len(completions):
-        return completions[state]
+        return completions[state] + " "
     return None
 
 readline.set_completer(completer)
