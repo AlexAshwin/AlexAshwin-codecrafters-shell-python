@@ -72,7 +72,6 @@ def handler_cat(args):
     try:
         with open(args, 'r') as f:
             sys.stdout.write(f.read())
-        print("\n")
     except FileNotFoundError:
         print(f"cat: {args}: No such file or directory")
 
