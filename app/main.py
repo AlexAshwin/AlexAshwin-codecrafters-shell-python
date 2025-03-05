@@ -4,9 +4,9 @@ import os
 def handler_echo(args=None):
     if (args.startswith('"') and args.endswith('"')) or (args.startswith("'") and args.endswith("'")):
         args = args[1:-1].split()
-        print(" ".join(args))   
     else:
-        print(args if args else "")
+        args = args.split()
+    print(" ".join(args))
 
 def handler_exit(args=None):
     exit(0)
