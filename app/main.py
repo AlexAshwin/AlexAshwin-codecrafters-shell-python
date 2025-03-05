@@ -9,11 +9,13 @@ def handler_echo(args=None):
         args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
+            f.write("\n")
     elif ">" in args:
         args = args.split(" > ")  # Remove space after '>'
         args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
+            f.write("\n")
     else:
         print(args)  # Print to terminal if no redirection
 
