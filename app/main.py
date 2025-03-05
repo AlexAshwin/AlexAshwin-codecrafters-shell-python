@@ -3,7 +3,11 @@ import os
 import subprocess
 
 def handler_echo(args=None):
-    print(args)
+    if ("1>" in args)or (">" in args):
+        print("yes")
+    else:
+        print(args)
+
 
 def handler_exit(args=None):
     exit(0)
