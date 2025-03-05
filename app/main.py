@@ -113,32 +113,4 @@ def main():
                     with open(file_path, 'w') as f:
                         sys.stdout = f
                         builtin[cmd](args)
-                        sys.stdout = sys.__stdout__
-            else:
-                check_executable_with_redirection(cmd_part, file_path)
-        else:
-            try:
-                parts = shlex.split(command)
-            except ValueError as e:
-                print(f"Error parsing command: {e}")
-                continue
-
-            cmd = parts[0]
-            args = " ".join(parts[1:]) if len(parts) > 1 else None
-
-            if cmd in builtin:
-                builtin[cmd](args)
-            else:
-                check_executable(command)
-
-# Built-in commands
-builtin = {
-    "echo": handler_echo,
-    "exit": handler_exit,
-    "type": handler_type,
-    "pwd": handler_pwd,
-    "cd": handler_change_directory
-}
-
-if __name__ == "__main__":
-    main()
+                        sys.stdout = sys.__stdout
