@@ -73,14 +73,12 @@ def handler_change_directory(args):
             print(f"cd: {args}: No such file or directory")
     sys.stdout.write("$ ")
 
-def handler_cat(args=None):
-    if args is None:
-        return
+def handler_cat(args):
     try:
         with open(args, 'r') as f:
-            print(f.read())
+            sys.stdout.write(f.read())
     except FileNotFoundError:
-        print(f"cat: {os.path.basename(args)}: No such file or directory")
+        print(f"cat: {args}: No such file or directory")
 
 builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory, "cat": handler_cat}
 
