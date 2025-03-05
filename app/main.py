@@ -98,7 +98,7 @@ def main():
             builtin[cmd](args)
         else:
             check_executable(command)
-        sys.stdout.write("\n$ ")
+        sys.stdout.write("$ ")
 
 if __name__ == "__main__":
     main()
