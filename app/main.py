@@ -3,14 +3,7 @@ import os
 import shlex
 
 def handler_echo(args=None):
-    if args:
-        # Split like a shell would, preserving quoted spaces and handling escapes
-        parsed_args = shlex.split(args, posix=True)
-        # Instead of using repr(), we simply print the string as is
-        print("".join(parsed_args))
-    else:
-        print("")
-
+    print(args)
 def handler_exit(args=None):
     exit(0)
 
