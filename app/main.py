@@ -1,14 +1,30 @@
 import sys
-from os import chdir, environ, getcwd, path
+from os import chdir, environ, getcwd, path, listdir
 import shlex
 from contextlib import redirect_stdout, redirect_stderr
 from subprocess import run, PIPE
 import readline
 
+# List of built-in commands
 all_builtin_cmd = ["exit", "echo", "type", "pwd", "cd"]
 
+# Completer function that includes executables
 def completer(text, state):
+    # First try to complete built-in commands
     completions = [cmd for cmd in all_builtin_cmd if cmd.startswith(text)]
+    
+    # Also try to complete executables from the system PATH
+    if not completions:
+        PATH_ENV = environ["PATH"].split(":")
+        for path_dir in PATH_ENV:
+            try:
+                # Check if there are files that match the input text
+                files = [f for f in listdir(path_dir) if f.startswith(text) and path.isfile(path.join(path_dir, f))]
+                completions.extend(files)
+            except FileNotFoundError:
+                continue
+    
+    # Return the nth completion
     if state < len(completions):
         return completions[state] + " "
     return None
