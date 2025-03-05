@@ -77,7 +77,6 @@ def handler_cat(args):
             sys.stdout.write(f.read())
     except FileNotFoundError:
         print(f"cat: {args}: No such file or directory")
-    sys.stdout.write("$ ")
 
 builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory, "cat": handler_cat}
 
