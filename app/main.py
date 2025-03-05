@@ -17,6 +17,7 @@ def handler_echo(args=None):
 
     else:
         print(args)
+    sys.stdout.write("$ ")
 
 def handler_exit(args=None):
     exit(0)
@@ -30,6 +31,7 @@ def handler_type(args):
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
+    sys.stdout.write("$ ")
 
 def find_executable(command):
     for dir in os.environ.get("PATH", "").split(os.pathsep):
@@ -47,14 +49,15 @@ def check_executable(args):
             file_name = file_name.strip()
             with open(file_name, 'w') as f:
                 subprocess.run(command, shell=True, stdout=f)
-            # Don't print the command when it's being redirected to a file
             return
         subprocess.run(args, shell=True)
     else:
         print(f"{args}: not found")
+    sys.stdout.write("$ ")
 
 def handler_pwd(args=None):
     print(os.getcwd())
+    sys.stdout.write("$ ")
 
 def handler_change_directory(args):
     if args == '~':
@@ -66,26 +69,32 @@ def handler_change_directory(args):
             os.chdir(args)
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
+    sys.stdout.write("$ ")
 
 def handler_cat(args):
     try:
         with open(args, 'r') as f:
             print(f.read())
-        pass
     except FileNotFoundError:
         print(f"cat: {args}: No such file or directory")
+    sys.stdout.write("$ ")
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory ,"cat":handler_cat}
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory, "cat": handler_cat}
 
 def main():
     while True:
         sys.stdout.write("$ ")
-        command = input()
+        command = input().strip()
+
+        if not command:
+            continue
+
         parts = command.split(maxsplit=1)
         if len(parts) > 1:
             cmd, args = parts
         else:
             cmd, args = parts[0], None
+
         if cmd in builtin:
             builtin[cmd](args)
         else:
