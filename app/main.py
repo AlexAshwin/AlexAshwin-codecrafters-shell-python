@@ -71,7 +71,7 @@ builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pw
 
 def main():
     while True:
-        print("$ ", end="")
+        sys.stdout.write("$ ")
         command = input()
         parts = command.split(maxsplit=1)
         if len(parts) > 1:
