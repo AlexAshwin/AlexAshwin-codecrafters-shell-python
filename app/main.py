@@ -31,11 +31,17 @@ def find_executable(command):
     return None
 
 def check_executable(command):
-    script_path = find_executable(command.split()[0])
+    try:
+        parts = shlex.split(command)
+    except ValueError as e:
+        print(f"Error parsing command: {e}")
+        return
+
+    script_path = find_executable(parts[0])
     if script_path:
         os.system(command)
     else:
-        print(f"{command}: not found")
+        print(f"{parts[0]}: not found")
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -67,7 +73,12 @@ def main():
         if not command.strip():
             continue
 
-        parts = shlex.split(command)
+        try:
+            parts = shlex.split(command)
+        except ValueError as e:
+            print(f"Error parsing command: {e}")
+            continue
+
         cmd = parts[0]
         args = " ".join(parts[1:]) if len(parts) > 1 else None
 
