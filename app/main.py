@@ -10,7 +10,6 @@ def handler_echo(args=None):
     else:
         print("")
 
-
 def handler_exit(args=None):
     exit(0)
 
@@ -18,7 +17,6 @@ def handler_type(args):
     if args in builtin:
         print(f"{args} is a shell builtin")
     else:
-        # Use os to check if the command is executable
         path = find_executable(args)
         if path:
             print(f"{args} is {path}")
@@ -26,19 +24,18 @@ def handler_type(args):
             print(f"{args}: not found")
 
 def find_executable(command):
-    # Check if the command is in the system's PATH
     for dir in os.environ.get("PATH", "").split(os.pathsep):
         executable = os.path.join(dir, command)
         if os.path.isfile(executable) and os.access(executable, os.X_OK):
             return executable
     return None
 
-def check_executable(args):
-    script_path = find_executable(args.split()[0])
+def check_executable(command):
+    script_path = find_executable(command.split()[0])
     if script_path:
-        os.system(args)
+        os.system(command)
     else:
-        print(f"{args}: not found")
+        print(f"{command}: not found")
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -54,21 +51,26 @@ def handler_change_directory(args):
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
 
-# Define built-in handlers
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory}
+builtin = {
+    "echo": handler_echo,
+    "exit": handler_exit,
+    "type": handler_type,
+    "pwd": handler_pwd,
+    "cd": handler_change_directory
+}
 
 def main():
     while True:
         print("$ ", end="", flush=True)
         command = input()
-        parts = command.split(maxsplit=1)
-        
-        # If no arguments provided for commands like echo or type, pass None to the handler
-        if len(parts) > 1:
-            cmd, args = parts
-        else:
-            cmd, args = parts[0], None
-        
+
+        if not command.strip():
+            continue
+
+        parts = shlex.split(command)
+        cmd = parts[0]
+        args = " ".join(parts[1:]) if len(parts) > 1 else None
+
         if cmd in builtin:
             builtin[cmd](args)
         else:
