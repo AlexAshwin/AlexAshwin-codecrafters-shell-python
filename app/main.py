@@ -5,12 +5,12 @@ import subprocess
 def handler_echo(args=None):
     # Check for output redirection
     if "1>" in args:
-        args = args.split("1>")  # Remove space after '1>'
+        args = args.split(" 1> ")  # Remove space after '1>'
         args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
     elif ">" in args:
-        args = args.split(">")  # Remove space after '>'
+        args = args.split(" > ")  # Remove space after '>'
         args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
