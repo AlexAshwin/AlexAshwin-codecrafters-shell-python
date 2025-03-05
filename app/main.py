@@ -1,12 +1,15 @@
 import sys
 import os
+import shlex
 
 def handler_echo(args=None):
-    if (args.startswith('"') and args.endswith('"')) or (args.startswith("'") and args.endswith("'")):
-        args = args[1:-1].split()
+    if args:
+        # Split like a shell would, preserving quoted spaces
+        parsed_args = shlex.split(args)
+        print(" ".join(parsed_args))
     else:
-        args = args.split()
-    print(" ".join(args))
+        print("")
+
 
 def handler_exit(args=None):
     exit(0)
