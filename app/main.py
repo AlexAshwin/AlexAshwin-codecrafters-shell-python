@@ -5,14 +5,16 @@ import subprocess
 def handler_echo(args=None):
     if ("1>" in args):
         args = args.split(" 1> ")
-        with open(args[1], "w") as f:
-            #print(args[0])
+        args[0] = args[0].strip("'")
+        with open(args[1], 'w') as f:
             f.write(args[0])
 
     elif (">" in args):
         args = args.split(" > ")
+        args[0] = args[0].strip("'")
         with open(args[1], 'w') as f:
             f.write(args[0])
+
     else:
         print(args)
 
