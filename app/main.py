@@ -8,6 +8,9 @@ def handler_echo(args=None):
         args[0] = args[0].strip("'")
         with open(args[1], 'w') as f:
             f.write(args[0])
+        with open(args[1], 'r') as f:
+            contents = f.read()
+            print(contents)
 
     elif (">" in args):
         args = args.split(" > ")
