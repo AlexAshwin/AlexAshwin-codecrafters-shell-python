@@ -31,7 +31,6 @@ def handler_type(args):
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
-    sys.stdout.write("$ ")
 
 def find_executable(command):
     for dir in os.environ.get("PATH", "").split(os.pathsep):
@@ -53,7 +52,6 @@ def check_executable(args):
         subprocess.run(args, shell=True)
     else:
         print(f"{args}: not found")
-    sys.stdout.write("$ ")
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -69,12 +67,12 @@ def handler_change_directory(args):
             os.chdir(args)
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
-    sys.stdout.write("$ ")
 
 def handler_cat(args):
     try:
         with open(args, 'r') as f:
             sys.stdout.write(f.read())
+        print("\n")
     except FileNotFoundError:
         print(f"cat: {args}: No such file or directory")
 
