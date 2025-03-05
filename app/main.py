@@ -3,11 +3,18 @@ from os import chdir, environ, getcwd, path
 import shlex
 from contextlib import redirect_stdout, redirect_stderr
 from subprocess import run, PIPE
+import readline
+
+
 all_builtin_cmd = ["exit", "echo", "type", "pwd", "cd"]
 def main():
     sys.stdout.write("$ ")
     # Wait for user input
     cmd = input()
+    if cmd in all_builtin_cmd:
+        sys.stdout.write(all_builtin_cmd[cmd])
+    else:
+        print("Unknown command")
     match shlex.split(cmd):
         case [*run_cmd, ">>", file] | [*run_cmd, "1>>", file]:
             with open(file, "a") as out_file:
@@ -68,3 +75,8 @@ def cd_cmd(arg):
         print(f"cd: {arg}: No such file or directory", file=sys.stderr)
 if __name__ == "__main__":
     main()
+
+def completer(text, state):
+    input_text = readline.get_line_buffer()
+    completions = [cmd for cmd in all_builtin_cmd if cmd.startswith(input_text)]
+    return completions[state]
