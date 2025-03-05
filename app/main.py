@@ -3,21 +3,19 @@ import os
 import subprocess
 
 def handler_echo(args=None):
-    if ("1>" in args):
-        args = args.split("1> ")
-        args[0] = args[0].strip("'")
+    # Check for output redirection
+    if "1>" in args:
+        args = args.split("1>")  # Remove space after '1>'
+        args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
-
-    elif (">" in args):
-        args = args.split("> ")
-        args[0] = args[0].strip("'")
+    elif ">" in args:
+        args = args.split(">")  # Remove space after '>'
+        args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
-
     else:
-        print(args)
-
+        print(args)  # Print to terminal if no redirection
 
 def handler_exit(args=None):
     exit(0)
@@ -31,6 +29,8 @@ def handler_type(args):
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
+    # Only print the prompt if there's no redirection
+    sys.stdout.write("$ ")
 
 def find_executable(command):
     for dir in os.environ.get("PATH", "").split(os.pathsep):
@@ -52,6 +52,8 @@ def check_executable(args):
         subprocess.run(args, shell=True)
     else:
         print(f"{args}: not found")
+    # Only print the prompt if there's no redirection
+    sys.stdout.write("$ ")
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -67,6 +69,7 @@ def handler_change_directory(args):
             os.chdir(args)
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
+    sys.stdout.write("$ ")
 
 def handler_cat(args):
     try:
