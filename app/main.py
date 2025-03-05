@@ -2,8 +2,20 @@ import sys
 import os
 import shlex
 
-def handler_echo(args=None):
-    print(args)
+def handler_echo(args=None, redirect_file=None):
+    if args:
+        # Split like a shell would, preserving quoted spaces and handling escapes
+        parsed_args = shlex.split(args, posix=True)
+        # Join and print the args, redirect to file if needed
+        output = " ".join(parsed_args)
+        if redirect_file:
+            with open(redirect_file, 'w') as f:
+                f.write(output + "\n")
+        else:
+            print(output)
+    else:
+        print("")
+
 def handler_exit(args=None):
     exit(0)
 
@@ -24,7 +36,7 @@ def find_executable(command):
             return executable
     return None
 
-def check_executable(command):
+def check_executable(command, redirect_file=None):
     try:
         parts = shlex.split(command)
     except ValueError as e:
@@ -37,8 +49,13 @@ def check_executable(command):
     else:
         print(f"{parts[0]}: not found")
 
-def handler_pwd(args=None):
-    print(os.getcwd())
+def handler_pwd(args=None, redirect_file=None):
+    output = os.getcwd()
+    if redirect_file:
+        with open(redirect_file, 'w') as f:
+            f.write(output + "\n")
+    else:
+        print(output)
 
 def handler_change_directory(args):
     if args == '~':
@@ -59,6 +76,15 @@ builtin = {
     "cd": handler_change_directory
 }
 
+def parse_redirect(command):
+    # Check if there's a redirection operator (> or 1>)
+    if ">" in command:
+        parts = command.split(">")
+        cmd = parts[0].strip()  # The actual command
+        file_name = parts[1].strip()  # The file to redirect output to
+        return cmd, file_name
+    return command, None
+
 def main():
     while True:
         print("$ ", end="", flush=True)
@@ -66,6 +92,9 @@ def main():
 
         if not command.strip():
             continue
+
+        # Check for redirection operator
+        command, redirect_file = parse_redirect(command)
 
         try:
             parts = shlex.split(command)
@@ -77,9 +106,9 @@ def main():
         args = " ".join(parts[1:]) if len(parts) > 1 else None
 
         if cmd in builtin:
-            builtin[cmd](args)
+            builtin[cmd](args, redirect_file)
         else:
-            check_executable(command)
+            check_executable(command, redirect_file)
 
 if __name__ == "__main__":
     main()
