@@ -8,10 +8,6 @@ def handler_echo(args=None):
         args[0] = args[0].strip("'")
         with open(args[1], 'w') as f:
             f.write(args[0])
-        with open(args[1], 'r') as f:
-            contents = f.read()
-            print(contents)
-
     elif (">" in args):
         args = args.split(" > ")
         args[0] = args[0].strip("'")
@@ -71,7 +67,14 @@ def handler_change_directory(args):
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
 
-builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory}
+def handler_cat(args):
+    try:
+        with open(args, 'r') as f:
+            print(f.read())
+    except FileNotFoundError:
+        print(f"cat: {args}: No such file or directory")
+
+builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory,"cat": handler_cat}
 
 def main():
     while True:
