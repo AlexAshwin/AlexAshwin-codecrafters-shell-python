@@ -11,7 +11,7 @@ def handler_echo(args=None):
             f.write(args[0])
             f.write("\n")
     elif ">" in args:
-        args = args.split(" > ")  # Remove space after '>'
+        args = args.split("> ")  # Remove space after '>'
         args[0] = args[0].strip("'")  # Clean up the string
         with open(args[1], 'w') as f:
             f.write(args[0])
@@ -31,8 +31,6 @@ def handler_type(args):
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
-    # Only print the prompt if there's no redirection
-    sys.stdout.write("$ ")
 
 def find_executable(command):
     for dir in os.environ.get("PATH", "").split(os.pathsep):
@@ -53,9 +51,7 @@ def check_executable(args):
             return
         subprocess.run(args, shell=True)
     else:
-        print(f"{args}: not found")
-    # Only print the prompt if there's no redirection
-    sys.stdout.write("$ ")
+        print(f"{args.split()[0]}: not found")  # Only show the command part, not the redirection part
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -78,7 +74,7 @@ def handler_cat(args):
         with open(args, 'r') as f:
             sys.stdout.write(f.read())
     except FileNotFoundError:
-        print(f"cat: {args}: No such file or directory")
+        print(f"cat: {args.split()[0]}: No such file or directory")  # Only show the file part, not the redirection
 
 builtin = {"echo": handler_echo, "exit": handler_exit, "type": handler_type, "pwd": handler_pwd, "cd": handler_change_directory, "cat": handler_cat}
 
