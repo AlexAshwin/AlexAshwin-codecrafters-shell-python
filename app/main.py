@@ -4,10 +4,10 @@ import shlex
 
 def handler_echo(args=None):
     if args:
-        # Split like a shell would, preserving quoted spaces
+        # Split like a shell would, preserving quoted spaces and handling escapes
         parsed_args = shlex.split(args, posix=True)
-        # Use repr() to preserve escape sequences and quotes
-        print(" ".join([repr(arg) for arg in parsed_args]))
+        # Now we manually escape backslashes and quotes
+        print(" ".join([arg.replace("\\", "\\\\").replace("'", "\\'") for arg in parsed_args]))
     else:
         print("")
 
