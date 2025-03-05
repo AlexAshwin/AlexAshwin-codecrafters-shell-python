@@ -2,14 +2,8 @@ import sys
 import os
 import shlex
 
-# Handler functions for built-in commands
-def handler_echo(args=None, redirect=False, file_path=None):
-    if redirect:
-        with open(file_path, 'w') as f:
-            f.write(args + "\n")
-    else:
-        print(args)
-
+def handler_echo(args=None):
+    print(args)
 def handler_exit(args=None):
     exit(0)
 
@@ -22,6 +16,26 @@ def handler_type(args):
             print(f"{args} is {path}")
         else:
             print(f"{args}: not found")
+
+def find_executable(command):
+    for dir in os.environ.get("PATH", "").split(os.pathsep):
+        executable = os.path.join(dir, command)
+        if os.path.isfile(executable) and os.access(executable, os.X_OK):
+            return executable
+    return None
+
+def check_executable(command):
+    try:
+        parts = shlex.split(command)
+    except ValueError as e:
+        print(f"Error parsing command: {e}")
+        return
+
+    script_path = find_executable(parts[0])
+    if script_path:
+        os.system(command)
+    else:
+        print(f"{parts[0]}: not found")
 
 def handler_pwd(args=None):
     print(os.getcwd())
@@ -37,47 +51,14 @@ def handler_change_directory(args):
         except FileNotFoundError:
             print(f"cd: {args}: No such file or directory")
 
-# Find the executable in the system's PATH
-def find_executable(command):
-    for dir in os.environ.get("PATH", "").split(os.pathsep):
-        executable = os.path.join(dir, command)
-        if os.path.isfile(executable) and os.access(executable, os.X_OK):
-            return executable
-    return None
+builtin = {
+    "echo": handler_echo,
+    "exit": handler_exit,
+    "type": handler_type,
+    "pwd": handler_pwd,
+    "cd": handler_change_directory
+}
 
-# Execute non-built-in commands with redirection
-def check_executable_with_redirection(command, file_path):
-    try:
-        parts = shlex.split(command)
-    except ValueError as e:
-        print(f"Error parsing command: {e}")
-        return
-
-    script_path = find_executable(parts[0])
-    if script_path:
-        # Redirect the output to the specified file
-        with open(file_path, 'w') as f:
-            sys.stdout = f  # Redirect stdout to file
-            os.system(command)
-            sys.stdout = sys.__stdout__  # Reset stdout back to terminal
-    else:
-        print(f"{parts[0]}: not found")
-
-# Check for executable command (non-built-in)
-def check_executable(command):
-    try:
-        parts = shlex.split(command)
-    except ValueError as e:
-        print(f"Error parsing command: {e}")
-        return
-
-    script_path = find_executable(parts[0])
-    if script_path:
-        os.system(command)
-    else:
-        print(f"{parts[0]}: not found")
-
-# Handle redirection and built-in command execution
 def main():
     while True:
         print("$ ", end="", flush=True)
@@ -86,59 +67,19 @@ def main():
         if not command.strip():
             continue
 
-        # Handle redirection (1> or >)
-        if '>' in command:
-            parts = command.split('>')
-            cmd_part = parts[0].strip()
-            file_path = parts[1].strip()
+        try:
+            parts = shlex.split(command)
+        except ValueError as e:
+            print(f"Error parsing command: {e}")
+            continue
 
-            # Find the command and its arguments
-            try:
-                parts = shlex.split(cmd_part)
-            except ValueError as e:
-                print(f"Error parsing command: {e}")
-                continue
+        cmd = parts[0]
+        args = " ".join(parts[1:]) if len(parts) > 1 else None
 
-            cmd = parts[0]
-            args = " ".join(parts[1:]) if len(parts) > 1 else None
-
-            # Redirect output to the file
-            if cmd in builtin:
-                if args:
-                    with open(file_path, 'w') as f:
-                        sys.stdout = f  # Redirect stdout to file
-                        builtin[cmd](args)
-                        sys.stdout = sys.__stdout__  # Reset stdout back to terminal
-                else:
-                    with open(file_path, 'w') as f:
-                        sys.stdout = f
-                        builtin[cmd](args)
-                        sys.stdout = sys.__stdout__
-            else:
-                check_executable_with_redirection(cmd_part, file_path)
+        if cmd in builtin:
+            builtin[cmd](args)
         else:
-            try:
-                parts = shlex.split(command)
-            except ValueError as e:
-                print(f"Error parsing command: {e}")
-                continue
-
-            cmd = parts[0]
-            args = " ".join(parts[1:]) if len(parts) > 1 else None
-
-            if cmd in builtin:
-                builtin[cmd](args)
-            else:
-                check_executable(command)
-
-# Built-in commands
-builtin = {
-    "echo": handler_echo,
-    "exit": handler_exit,
-    "type": handler_type,
-    "pwd": handler_pwd,
-    "cd": handler_change_directory
-}
+            check_executable(command)
 
 if __name__ == "__main__":
     main()
